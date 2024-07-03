@@ -1,0 +1,26 @@
+body {
+    padding: 0;
+    margin: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: #202432;
+
+    background-image: url(../src/images/bg_1.png);
+    background-size: 50%;
+
+    /**/
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Chrome/Safari/Opera */
+    -khtml-user-select: none; /* Konqueror */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
+    user-select: none;
+}
+
+canvas {
+    display: block;
+    width: 56.33vh;
+    height: 100vh;
+    margin: auto;
+    box-shadow: 0 0 24px 12px #000000;
+}
