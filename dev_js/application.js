@@ -39,7 +39,7 @@ function onBlur() {
 
 function checkTabs() {
     let tabs = +localStorage.getItem('tabs')
-    if (tabs > 1) alert('Игра уже запущена в другой вкладке')
+    if (tabs > 1) console.log('Игра уже запущена в другой вкладке')
 }
 
 export class Layer extends Container {

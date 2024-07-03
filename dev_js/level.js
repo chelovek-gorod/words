@@ -17,10 +17,17 @@ const settings = {
     inputLetterSize: 42,
     inputLetterColor: 0x4d4d4d,
 
-    userLetterSquareOffsetY: 645, // from top
+    userLetterSquareOffsetY: 645 + 72, // from top
     userLetterSquareSize: 294,
     userLetterSquareDiscWidth: 32,
     userLetterSquareDiscColor: 0x3e4a68,
+
+    userLetterCircleRadius: 45,
+    userLetterCircShadowOffset: 6,
+    userLetterCircleColor: 0xffffff,
+    userLetterCircleColorShadow: 0xa6a8ab,
+    userLetterCircleColorSelected: 0xe96fa4,
+    userLetterCircleColorSelectedShadow: 0xaf638c,
 }
 
 function getLetters(words) {
@@ -103,6 +110,9 @@ export class Level extends Layer {
         this.inputLayer = new Input(settings.startWordsOffsetY + wordsLayerHeight + settings.inputLetterOffsetY)
         this.addChild(this.inputLayer)
 
+        this.userLetter = new UserLetters(this.letters)
+        this.addChild(this.userLetter)
+
         this.showLayer()
 
         // test
@@ -148,7 +158,6 @@ class LetterBox extends Container {
 class Input extends Container {
     constructor(y) {
         super()
-        console.log('y:', y)
 
         this.position.y = y
         this.size = 0
@@ -156,7 +165,6 @@ class Input extends Container {
     }
 
     addLetter(letter) {
-        console.log(this)
         const letterBox = new LetterBox(settings.inputLetterSize, settings.inputLetterBorderRadius, letter, textStyles.inputLetter)
         letterBox.position.x = this.size
         this.addChild(letterBox)
@@ -168,5 +176,82 @@ class Input extends Container {
     clearLetters() {
         this.size = 0
         clearContainer(this)
+    }
+}
+
+class UserLetters extends Container {
+    constructor(letters) {
+        super()
+
+        const circleRadius = settings.userLetterSquareSize * 0.5
+        this.position.set(screenData.centerX, settings.userLetterSquareOffsetY + circleRadius)
+
+        this.circleLine = new Graphics()
+        this.circleLine.lineStyle(settings.userLetterSquareDiscWidth, settings.userLetterSquareDiscColor)
+        //this.circleLine.beginFill(0xffff00, 0.25)
+        
+        this.circleLine.drawCircle(0, 0, circleRadius)
+        this.addChild(this.circleLine)
+
+        this.letters = addButtons(letters, circleRadius)
+        this.addChild(...this.letters)
+        console.log(this.letters)
+    }
+}
+
+function addButtons(letters, circleRadius) {
+    let buttons = []
+    let angle = -Math.PI * 0.5
+    const angleStep = (2 * Math.PI) / letters.length
+    letters.forEach(latter => {
+        const button = new Button(latter)
+        button.position.x = Math.cos(angle) * circleRadius
+        button.position.y = Math.sin(angle) * circleRadius
+
+        buttons.push(button)
+        angle += angleStep
+    })
+
+    return buttons
+}
+
+class Button extends Container {
+    constructor(latter) {
+        super()
+
+        this.text = latter
+
+        this.shadow = new Graphics()
+        this.addChild(this.shadow)
+
+        this.circle = new Graphics()
+        this.addChild(this.circle)
+
+        this.letter = new Text(this.text, textStyles.userLetter)
+        this.letter.anchor.set(0.5)
+        this.addChild(this.letter)
+
+        this.renderOff()
+        //this.renderOn()
+    }
+
+    renderOn() {
+        this.shadow.beginFill(settings.userLetterCircleColorSelectedShadow)
+        this.shadow.drawCircle(0, settings.userLetterCircShadowOffset, settings.userLetterCircleRadius)
+        
+        this.circle.beginFill(settings.userLetterCircleColorSelected)
+        this.circle.drawCircle(0, 0, settings.userLetterCircleRadius)
+
+        this.letter.style.fill = '#ffffff'
+    }
+
+    renderOff() {
+        this.shadow.beginFill(settings.userLetterCircleColorShadow)
+        this.shadow.drawCircle(0, settings.userLetterCircShadowOffset, settings.userLetterCircleRadius)
+        
+        this.circle.beginFill(settings.userLetterCircleColor)
+        this.circle.drawCircle(0, 0, settings.userLetterCircleRadius)
+
+        this.letter.style.fill = '#4d4d4d'
     }
 }
