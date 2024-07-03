@@ -14,12 +14,28 @@ export function initFontStyles() {
             fill: ['#ffffff', '#777777', '#ffffff'],
         }),
 
-        buttons_menu: new TextStyle({
+        levelNumber: new TextStyle({
             fontFamily: fonts.vag,
-            fontSize: 36,
-            fill: ['#777777', '#ffffff', '#777777'],
-            stroke: '#000000',
-            strokeThickness: 4
+            fontSize: 30,
+            fill: '#ffffff',
+        }),
+
+        wordLetter: new TextStyle({
+            fontFamily: fonts.vag,
+            fontSize: 42,
+            fill: '#ffffff',
+        }),
+
+        inputLetter: new TextStyle({
+            fontFamily: fonts.vag,
+            fontSize: 30,
+            fill: '#4d4d4d',
+        }),
+
+        userLetter: new TextStyle({
+            fontFamily: fonts.vag,
+            fontSize: 57,
+            fill: '#4d4d4d',
         }),
 
         buttons_menu_hover: new TextStyle({

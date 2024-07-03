@@ -1,24 +1,20 @@
 import { Application, Container } from 'pixi.js'
 import { playMusic, stopMusic } from './sound'
 
-const appScreen = {
+export const screenData = {
     width: 640,
     height: 1136,
 }
-appScreen.centerX = appScreen.width * 0.5
-appScreen.centerY = appScreen.height * 0.5
-
-export function getAppScreen() {
-    return appScreen
-}
+screenData.centerX = screenData.width * 0.5
+screenData.centerY = screenData.height * 0.5
 
 const app = new Application({
     background: 0x2B344B,
     antialias: true, // сглаживание
     resolution: 2,
     //resizeTo: window
-    width: appScreen.width,
-    height: appScreen.height
+    width: screenData.width,
+    height: screenData.height
 })
 document.body.append( app.view )
 
@@ -40,23 +36,6 @@ function onFocus() {
 function onBlur() {
     stopMusic()
 }
-
-/*
-const testData = localStorage.getItem('TEST')
-if (testData) {
-    let data = JSON.parse(testData)
-    data.value++
-    localStorage.setItem('TEST', JSON.stringify(data))
-} else {
-    localStorage.setItem('TEST', JSON.stringify({value: 1}) )
-}
-
-onbeforeunload = updateTestData
-function updateTestData() {
-    let tabs = +localStorage.getItem('tabs')
-    localStorage.setItem('tabs', --tabs)
-}
-*/
 
 function checkTabs() {
     let tabs = +localStorage.getItem('tabs')

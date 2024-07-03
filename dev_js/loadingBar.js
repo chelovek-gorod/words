@@ -1,6 +1,6 @@
 import { Graphics, Text } from 'pixi.js'
 import { textStyles } from './fonts'
-import { getAppScreen, Layer } from './application'
+import { screenData, Layer } from './application'
 
 const settings = {
     lineY: 6,
@@ -22,12 +22,9 @@ settings.bgX = -settings.bgWidth * 0.5
 settings.bgY = settings.lineY - settings.lineOffset
 settings.lineX = settings.bgX + settings.lineOffset
 
-
 class LoadingBar extends Layer {
     constructor() {
         super()
-
-        let screenData = getAppScreen()
 
         this.position.x = screenData.centerX
         this.position.y = screenData.centerY

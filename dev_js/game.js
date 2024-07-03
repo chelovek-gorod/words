@@ -1,5 +1,5 @@
-import {levels} from './loader'
-import {Level} from './level'
+import { levels } from './loader'
+import { Level } from './level'
 
 let levelsNumber = 0
 let currentLevel = 0
@@ -19,7 +19,9 @@ export function startGame() {
 function nextLevel() {
     currentLevel++
     const levelIndex = currentLevel % levelsNumber
-    let level = new Level(levels[levelIndex].words)
+    
+    let words = levels[levelIndex].words.map(word => word.toUpperCase())
+    let level = new Level(words, currentLevel)
 }
 
 /*
