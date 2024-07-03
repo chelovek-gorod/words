@@ -11,6 +11,8 @@ const settings = {
     wordsLetterSize: 72,
     wordsLetterBorderRadius: 28,
     wordsLetterColor: 0xffffff,
+    wordsLetterScale: 1,
+    wordsMaximum: 6,
 
     inputLetterOffsetY: 19, // from last word
     inputLetterOffset: 3,
@@ -85,10 +87,11 @@ function addWords(words, container) {
         container.addChild(line)
         wordsContainer.push(line)
 
-        line.position.x = (screenData.width - line.width) * 0.5
+        line.position.x = (screenData.width - line.width * settings.wordsLetterScale) * 0.5 
         line.position.y = startY
+        line.scale.set(settings.wordsLetterScale)
 
-        startY += offset
+        startY += offset * settings.wordsLetterScale
     })
 
     return wordsContainer
@@ -97,6 +100,8 @@ function addWords(words, container) {
 export class Level extends Layer {
     constructor(words, levelNumber) {
         super()
+
+        settings.wordsLetterScale = (words.length > settings.wordsMaximum) ? settings.wordsMaximum / words.length : 1
 
         this.textLevelNumber = new Text(`Уровень ${levelNumber}`, textStyles.levelNumber)
         this.textLevelNumber.anchor.set(0.5, 0)
@@ -112,7 +117,7 @@ export class Level extends Layer {
 
         this.wordsLayer = addWords(words, this)
         
-        const wordsLayerHeight = (settings.wordsLettersOffset + settings.wordsLetterSize) * this.wordsLayer.length 
+        const wordsLayerHeight = (settings.wordsLettersOffset + settings.wordsLetterSize) * settings.wordsMaximum 
         this.inputLayer = new Input(settings.startWordsOffsetY + wordsLayerHeight + settings.inputLetterOffsetY)
         this.addChild(this.inputLayer)
 

@@ -21,7 +21,7 @@ function levelDone() {
 }
 
 export function startGame() {
-    //playMusic()
+    playMusic()
 
     levelsNumber = Object.keys(levels).length
     nextLevel()
@@ -29,7 +29,9 @@ export function startGame() {
 
 function nextLevel() {
     currentLevel++
-    const levelIndex = currentLevel % levelsNumber
+    let levelIndex = currentLevel % levelsNumber
+    if (levelIndex === 0) levelIndex = levelsNumber
+    console.log('currentLevel', currentLevel, 'levelIndex', levelIndex)
 
     let words = levels[levelIndex].words.map(word => word.toUpperCase())
     new Level(words, currentLevel)
