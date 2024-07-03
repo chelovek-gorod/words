@@ -16,8 +16,8 @@ const settings = {
     buttonShadowColor: 0x508853,
 }
 
-export class LevelDone extends Layer {
-    constructor(levelNumber) {
+export class ManyTabs extends Layer {
+    constructor() {
         super()
 
         this.textLevelDoneNumber = new Text(`Уровень ${levelNumber} пройден`, textStyles.levelDoneNumber)

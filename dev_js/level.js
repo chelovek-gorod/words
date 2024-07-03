@@ -1,4 +1,4 @@
-import { screenData, Layer, clearContainer } from "./application"
+import { screenData, Layer, clearContainer, removeSprite } from "./application"
 import { Container, Graphics, Text, LINE_CAP, LINE_JOIN } from 'pixi.js'
 import { textStyles } from './fonts'
 import { levelDone } from './events'
@@ -147,6 +147,16 @@ export class Level extends Layer {
 
     addInput(index) {
         if (!this.isOnInput) return
+
+        //cancel last letter
+        if (index === this.userButtonsInputIndexesArr[this.userButtonsInputIndexesArr.length - 2]) {
+            this.userButtonsInputIndexesArr.pop(index)
+            this.inputLayer.cancelLetter()
+            this.userWord = this.userWord.slice(0, -1)
+
+            this.userButtons.letters[lastButtonIndex].renderOff()
+            return
+        }
         
         // letter index is not in input
         if (this.userButtonsInputIndexesArr.indexOf(index) === -1) {
@@ -155,6 +165,8 @@ export class Level extends Layer {
             this.userWord += this.letters[index]
 
             this.userButtons.letters[index].renderOn()
+            lastButtonIndex = index
+            return
         }
     }
 
@@ -245,6 +257,14 @@ class Input extends Container {
         this.position.x = (screenData.width - this.size) * 0.5
     }
 
+    cancelLetter() {
+        const lastLetter = this.children[this.children.length - 1]
+        removeSprite(lastLetter)
+
+        this.size -= this.stepX
+        this.position.x = (screenData.width - this.size) * 0.5
+    }
+
     clearLetters() {
         this.size = 0
         clearContainer(this)
@@ -286,6 +306,8 @@ function addButtons(letters, circleRadius) {
 
     return buttons
 }
+
+let lastButtonIndex = 0
 
 class Button extends Container {
     constructor(latter, index) {
