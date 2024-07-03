@@ -1,5 +1,5 @@
 import { screenData, Layer, clearContainer } from "./application"
-import { Container, Graphics, Text } from 'pixi.js'
+import { Container, Graphics, Text, LINE_CAP, LINE_JOIN } from 'pixi.js'
 import { textStyles } from './fonts'
 
 const settings = {
@@ -28,7 +28,12 @@ const settings = {
     userLetterCircleColorShadow: 0xa6a8ab,
     userLetterCircleColorSelected: 0xe96fa4,
     userLetterCircleColorSelectedShadow: 0xaf638c,
+
+    curveColor: 0x638ec3,
+    curveWidth: 24,
 }
+
+let level = null
 
 function getLetters(words) {
     let allLetters = {}
@@ -74,7 +79,7 @@ function addWords(words, container) {
             startX += offset
             
             // test
-            letter.setColor(0x00ff00)
+            // letter.setColor(0x00ff00)
         }
         container.addChild(line)
         wordsContainer.push(line)
@@ -110,20 +115,83 @@ export class Level extends Layer {
         this.inputLayer = new Input(settings.startWordsOffsetY + wordsLayerHeight + settings.inputLetterOffsetY)
         this.addChild(this.inputLayer)
 
-        this.userLetter = new UserLetters(this.letters)
-        this.addChild(this.userLetter)
+        this.userButtons = new UserLetters(this.letters)
+        this.addChild(this.userButtons)
 
+        this.userCurve = new Graphics()
+        this.addChild(this.userCurve)
+
+        level = this
         this.showLayer()
 
-        // test
-        setTimeout( () => this.inputLayer.addLetter('А'), 1000)
-        setTimeout( () => this.inputLayer.addLetter('Б'), 1500)
-        setTimeout( () => this.inputLayer.addLetter('В'), 2000)
-        setTimeout( () => this.inputLayer.addLetter('Г'), 2500)
-        setTimeout( () => this.inputLayer.addLetter('Д'), 3000)
-        setTimeout( () => this.inputLayer.clearLetters(), 3500)
-        setTimeout( () => this.inputLayer.addLetter('Г'), 4500)
-        setTimeout( () => this.inputLayer.addLetter('Д'), 5000)
+        this.isOnInput = false
+        this.userWord = ''
+        this.userButtonsInputIndexesArr = []
+        this.userWordsCounter = 0
+
+        this.eventMode = 'static'
+        this.on('globalpointermove', (event) => { if(this.isOnInput) this.updateCurve(event) } )
+    }
+
+    startInput(index) {
+        //this.endInput()
+        this.isOnInput = true
+        this.addInput(index)
+    }
+
+    addInput(index) {
+        if (!this.isOnInput) return
+        
+        // letter index is not in input
+        if (this.userButtonsInputIndexesArr.indexOf(index) === -1) {
+            this.userButtonsInputIndexesArr.push(index)
+            this.inputLayer.addLetter(this.letters[index])
+            this.userWord += this.letters[index]
+
+            this.userButtons.letters[index].renderOn()
+        }
+    }
+
+    endInput() {
+        this.checkWord()
+
+        this.isOnInput = false
+        this.userWord = ''
+        this.userButtonsInputIndexesArr = []
+        this.inputLayer.clearLetters()
+
+        this.userButtons.letters.forEach(letter => letter.renderOff())
+        this.userCurve.clear()
+
+        if (this.userWordsCounter === this.words.length) {
+            alert('УРОВЕНЬ ПРОЙДЕН')
+        }
+    }
+
+    checkWord() {
+        const wordIndex = this.words.indexOf(this.userWord)
+
+        if(wordIndex === -1 || this.userWord === '') return
+
+        this.wordsLayer[wordIndex].children.forEach( letterBox => letterBox.setColor(0x65bd65) )
+        this.words[wordIndex] = ''
+        this.userWordsCounter++
+        console.log(this.words, wordIndex, this.userWord)
+    }
+
+    updateCurve(event) {
+        //console.log(event.global.x, event.global.y)
+
+        this.userCurve.clear()
+        this.userCurve.lineStyle({width: settings.curveWidth, color: settings.curveColor, cap: LINE_CAP.ROUND, join: LINE_JOIN.ROUND})
+        for(let i = 0; i < this.userButtonsInputIndexesArr.length; i++) {
+            const index = this.userButtonsInputIndexesArr[i]
+            const pointX = this.userButtons.letters[index].global.x
+            const pointY = this.userButtons.letters[index].global.y
+            if (i === 0) this.userCurve.moveTo(pointX, pointY)
+            else this.userCurve.lineTo(pointX, pointY)
+        }
+        this.userCurve.lineTo(event.global.x, event.global.y)
     }
 }
 
@@ -188,14 +256,12 @@ class UserLetters extends Container {
 
         this.circleLine = new Graphics()
         this.circleLine.lineStyle(settings.userLetterSquareDiscWidth, settings.userLetterSquareDiscColor)
-        //this.circleLine.beginFill(0xffff00, 0.25)
         
         this.circleLine.drawCircle(0, 0, circleRadius)
         this.addChild(this.circleLine)
 
         this.letters = addButtons(letters, circleRadius)
         this.addChild(...this.letters)
-        console.log(this.letters)
     }
 }
 
@@ -203,10 +269,12 @@ function addButtons(letters, circleRadius) {
     let buttons = []
     let angle = -Math.PI * 0.5
     const angleStep = (2 * Math.PI) / letters.length
-    letters.forEach(latter => {
-        const button = new Button(latter)
+    const buttonsGlobalOffsetY = settings.userLetterSquareOffsetY + settings.userLetterSquareSize * 0.5
+    letters.forEach((latter, index) => {
+        const button = new Button(latter, index)
         button.position.x = Math.cos(angle) * circleRadius
         button.position.y = Math.sin(angle) * circleRadius
+        button.global = {x: button.position.x + screenData.centerX, y: button.position.y + buttonsGlobalOffsetY}
 
         buttons.push(button)
         angle += angleStep
@@ -216,10 +284,11 @@ function addButtons(letters, circleRadius) {
 }
 
 class Button extends Container {
-    constructor(latter) {
+    constructor(latter, index) {
         super()
 
         this.text = latter
+        this.index = index
 
         this.shadow = new Graphics()
         this.addChild(this.shadow)
@@ -232,7 +301,12 @@ class Button extends Container {
         this.addChild(this.letter)
 
         this.renderOff()
-        //this.renderOn()
+
+        this.eventMode = 'static'
+        this.on('pointerdown', () => level.startInput(this.index) )
+        this.on('pointerenter', () => level.addInput(this.index) )
+        this.on('pointerup', () => level.endInput() )
+        this.on('pointerupoutside', () => level.endInput() )
     }
 
     renderOn() {
@@ -242,7 +316,7 @@ class Button extends Container {
         this.circle.beginFill(settings.userLetterCircleColorSelected)
         this.circle.drawCircle(0, 0, settings.userLetterCircleRadius)
 
-        this.letter.style.fill = '#ffffff'
+        this.letter.style = textStyles.userLetterOn
     }
 
     renderOff() {
@@ -252,6 +326,6 @@ class Button extends Container {
         this.circle.beginFill(settings.userLetterCircleColor)
         this.circle.drawCircle(0, 0, settings.userLetterCircleRadius)
 
-        this.letter.style.fill = '#4d4d4d'
+        this.letter.style = textStyles.userLetter
     }
 }

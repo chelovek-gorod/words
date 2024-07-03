@@ -38,6 +38,12 @@ export function initFontStyles() {
             fill: '#4d4d4d',
         }),
 
+        userLetterOn: new TextStyle({
+            fontFamily: fonts.vag,
+            fontSize: 57,
+            fill: '#ffffff',
+        }),
+
         buttons_menu_hover: new TextStyle({
             fontFamily: fonts.vag,
             fontSize: 36,
