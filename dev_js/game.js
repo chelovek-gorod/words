@@ -1,6 +1,8 @@
 import { levels } from './loader'
+import { clearStage } from './application'
 import { Level } from './level'
 import { playMusic } from './sound'
+import { EventHub, events } from './events'
 
 let levelsNumber = 0
 let currentLevel = 0
@@ -10,6 +12,12 @@ if (storageGameData) {
     if ('level' in gameData && gameData.level > currentLevel) {
         currentLevel = gameData.level
     }
+}
+
+EventHub.on(events.levelDone, levelDone)
+function levelDone() {
+    clearStage()
+    setTimeout(() => nextLevel(), 1000)
 }
 
 export function startGame() {
@@ -24,7 +32,7 @@ function nextLevel() {
     const levelIndex = currentLevel % levelsNumber
 
     let words = levels[levelIndex].words.map(word => word.toUpperCase())
-    let level = new Level(words, currentLevel)
+    new Level(words, currentLevel)
 }
 
 /*

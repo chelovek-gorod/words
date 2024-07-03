@@ -1,6 +1,7 @@
 import { screenData, Layer, clearContainer } from "./application"
 import { Container, Graphics, Text, LINE_CAP, LINE_JOIN } from 'pixi.js'
 import { textStyles } from './fonts'
+import { levelDone } from './events'
 
 const settings = {
     textLevelNumberY: 27,
@@ -163,9 +164,7 @@ export class Level extends Layer {
         this.userButtons.letters.forEach(letter => letter.renderOff())
         this.userCurve.clear()
 
-        if (this.userWordsCounter === this.words.length) {
-            alert('УРОВЕНЬ ПРОЙДЕН')
-        }
+        if (this.userWordsCounter === this.words.length) levelDone()
     }
 
     checkWord() {
