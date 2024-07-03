@@ -1,6 +1,7 @@
 import { levels } from './loader'
 import { clearStage } from './application'
 import { Level } from './level'
+import { LevelDone } from './levelDone'
 import { playMusic } from './sound'
 import { EventHub, events } from './events'
 
@@ -17,17 +18,22 @@ if (storageGameData) {
 EventHub.on(events.levelDone, levelDone)
 function levelDone() {
     clearStage()
-    setTimeout(() => nextLevel(), 1000)
+    new LevelDone(currentLevel)
 }
+
+EventHub.on(events.nextLevel, nextLevel)
 
 export function startGame() {
     playMusic()
 
     levelsNumber = Object.keys(levels).length
     nextLevel()
+    //levelDone()
 }
 
 function nextLevel() {
+    clearStage()
+
     currentLevel++
     let levelIndex = currentLevel % levelsNumber
     if (levelIndex === 0) levelIndex = levelsNumber

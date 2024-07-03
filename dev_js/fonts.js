@@ -44,6 +44,24 @@ export function initFontStyles() {
             fill: '#ffffff',
         }),
 
+        levelDoneNumber: new TextStyle({
+            fontFamily: fonts.vag,
+            fontSize: 37,
+            fill: '#ffffff',
+        }),
+
+        congratulation: new TextStyle({
+            fontFamily: fonts.vag,
+            fontSize: 53,
+            fill: '#ffffff',
+        }),
+
+        levelDoneButton: new TextStyle({
+            fontFamily: fonts.vag,
+            fontSize: 53,
+            fill: '#ffffff',
+        }),
+
         buttons_menu_hover: new TextStyle({
             fontFamily: fonts.vag,
             fontSize: 36,
