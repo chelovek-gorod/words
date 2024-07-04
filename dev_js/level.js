@@ -98,7 +98,7 @@ function addWords(words, container) {
 }
 
 export class Level extends Layer {
-    constructor(words, levelNumber) {
+    constructor(words, guessedWords, levelNumber) {
         super()
 
         settings.wordsLetterScale = (words.length > settings.wordsMaximum) ? settings.wordsMaximum / words.length : 1
@@ -109,7 +109,9 @@ export class Level extends Layer {
         this.textLevelNumber.position.y = settings.textLevelNumberY
         this.addChild(this.textLevelNumber)
 
+        this.levelNumber = levelNumber
         this.words = words
+        this.guessedWords = guessedWords
         this.words.sort((a, b) => a.length - b.length)
         this.letters = getLetters(words)
 
@@ -138,6 +140,8 @@ export class Level extends Layer {
 
         this.eventMode = 'static'
         this.on('globalpointermove', (event) => { if(this.isOnInput) this.updateCurve(event) } )
+
+        this.guessedWords.forEach(word => this.checkWord(word))
     }
 
     startInput(index) {
@@ -173,7 +177,7 @@ export class Level extends Layer {
     }
 
     endInput() {
-        this.checkWord()
+        this.checkWord(this.userWord)
 
         this.isOnInput = false
         this.userWord = ''
@@ -187,15 +191,24 @@ export class Level extends Layer {
         if (this.userWordsCounter === this.words.length) levelDone()
     }
 
-    checkWord() {
-        const wordIndex = this.words.indexOf(this.userWord)
+    checkWord(word) {
+        const wordIndex = this.words.indexOf(word)
 
-        if(wordIndex === -1 || this.userWord === '') return
+        if(wordIndex === -1 || word === '') return
 
         this.wordsLayer[wordIndex].children.forEach( letterBox => letterBox.setColor(0x65bd65) )
         this.words[wordIndex] = ''
         this.userWordsCounter++
-        console.log(this.words, wordIndex, this.userWord)
+
+        if (this.guessedWords.indexOf(word) === -1) {
+            this.guessedWords.push(word)
+
+            const gameData = {
+                level: this.levelNumber,
+                words: this.guessedWords
+            }
+            localStorage.setItem('gameData', JSON.stringify(gameData))
+        }
     }
 
     updateCurve(event) {
