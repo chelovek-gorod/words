@@ -1,5 +1,4 @@
 import { Application, Container } from 'pixi.js'
-import { playMusic, stopMusic } from './sound'
 
 export const screenData = {
     width: 640,
@@ -17,30 +16,6 @@ const app = new Application({
     height: screenData.height
 })
 document.body.append( app.view )
-
-
-
-window.addEventListener('focus', onFocus)
-window.addEventListener('blur', onBlur)
-if ('hidden' in document) document.addEventListener('visibilitychange', visibilityOnChange)
-function visibilityOnChange( isHide ) {
-    if (isHide) onBlur()
-    else onFocus()
-}
-
-function onFocus() {
-    playMusic()
-    checkTabs()
-}
-
-function onBlur() {
-    stopMusic()
-}
-
-function checkTabs() {
-    let tabs = +localStorage.getItem('tabs')
-    if (tabs > 1) console.log('Игра уже запущена в другой вкладке')
-}
 
 export class Layer extends Container {
     constructor( ...elements ) {

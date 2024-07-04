@@ -21,7 +21,6 @@ export function nextLevel() {
     EventHub.emit( events.nextLevel )
 }
 
-
 /*
 USAGE
 
