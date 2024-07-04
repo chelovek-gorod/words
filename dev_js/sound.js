@@ -46,7 +46,7 @@ export function playMusic() {
 
 function bgMusicPlay() {
     bgMusic = sound.add('bgm', musicList[bgMusicIndex] )
-    bgMusic.play({ volume: 0.5 }).then(instance => instance.on('end', nextBgMusic))
+    bgMusic.play({ volume: 0.3 }).then(instance => instance.on('end', nextBgMusic))
 }
 
 function nextBgMusic() {

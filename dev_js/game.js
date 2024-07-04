@@ -1,8 +1,8 @@
-import { levels } from './loader'
+import { levels, sounds } from './loader'
 import { clearStage } from './application'
 import { Level } from './level'
 import { LevelDone } from './levelDone'
-import { playMusic } from './sound'
+import { playSound } from './sound'
 import { EventHub, events } from './events'
 
 let levelsNumber = 1
@@ -22,9 +22,11 @@ if (storageGameData) {
 
 EventHub.on(events.levelDone, levelDone)
 function levelDone() {
+    playSound(sounds.bonus)
+
     clearStage()
     new LevelDone(currentLevel)
-    
+
     guessedWords = []
     currentLevel++
     const gameData = {
@@ -37,11 +39,8 @@ function levelDone() {
 EventHub.on(events.nextLevel, nextLevel)
 
 export function startGame() {
-    playMusic()
-
     levelsNumber = Object.keys(levels).length
     nextLevel()
-    //levelDone()
 }
 
 function nextLevel() {
@@ -49,8 +48,8 @@ function nextLevel() {
 
     let levelIndex = currentLevel % levelsNumber
     if (levelIndex === 0) levelIndex = levelsNumber
-    console.log('currentLevel', currentLevel, 'levelIndex', levelIndex)
 
     let words = levels[levelIndex].words.map(word => word.toUpperCase())
     new Level(words, guessedWords, currentLevel)
+    playSound(sounds.out)
 }

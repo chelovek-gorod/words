@@ -2,6 +2,8 @@ import { screenData, Layer, clearContainer, removeSprite } from "./application"
 import { Container, Graphics, Text, LINE_CAP, LINE_JOIN } from 'pixi.js'
 import { textStyles } from './fonts'
 import { levelDone } from './events'
+import { sounds } from './loader'
+import { playSound } from './sound'
 
 const settings = {
     textLevelNumberY: 27,
@@ -141,7 +143,7 @@ export class Level extends Layer {
         this.eventMode = 'static'
         this.on('globalpointermove', (event) => { if(this.isOnInput) this.updateCurve(event) } )
 
-        this.guessedWords.forEach(word => this.checkWord(word))
+        this.guessedWords.forEach(word => this.checkWord(word, false))
     }
 
     startInput(index) {
@@ -161,7 +163,7 @@ export class Level extends Layer {
 
             let lastButtonIndex = this.lastButtonIndexes.pop()
             this.userButtons.letters[lastButtonIndex].renderOff()
-            return
+            return playSound(sounds.hit)
         }
         
         // letter index is not in input
@@ -172,7 +174,7 @@ export class Level extends Layer {
 
             this.userButtons.letters[index].renderOn()
             this.lastButtonIndexes.push(index)
-            return
+            return playSound(sounds.bell)
         }
     }
 
@@ -187,18 +189,19 @@ export class Level extends Layer {
         this.lastButtonIndexes.length = 0
         this.userButtons.letters.forEach(letter => letter.renderOff())
         this.userCurve.clear()
-
-        if (this.userWordsCounter === this.words.length) levelDone()
     }
 
-    checkWord(word) {
+    checkWord(word, isNew = true) {
         const wordIndex = this.words.indexOf(word)
 
-        if(wordIndex === -1 || word === '') return
+        if(wordIndex === -1 || word === '') return sounds.done.isPlaying ? null : playSound(sounds.sticks)
 
         this.wordsLayer[wordIndex].children.forEach( letterBox => letterBox.setColor(0x65bd65) )
         this.words[wordIndex] = ''
         this.userWordsCounter++
+        if (this.userWordsCounter === this.words.length) return levelDone()
+        
+        if (isNew) playSound(sounds.done)
 
         if (this.guessedWords.indexOf(word) === -1) {
             this.guessedWords.push(word)

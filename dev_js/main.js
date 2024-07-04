@@ -1,15 +1,14 @@
 import { Assets } from 'pixi.js'
-import { fonts, uploadAssets } from './loader'
+import { fonts, uploadAssets, sounds } from './loader'
 import { initFontStyles } from './fonts'
 import { startGame } from './game'
-import { playMusic, stopMusic } from './sound'
+import { playMusic, stopMusic, playSound } from './sound'
 import getManyTabsShield from './manyTabs'
 
 // update tab counter
 let tabs = +localStorage.getItem('tabs')
 if (tabs > 0) localStorage.setItem('tabs', tabs + 1)
 else localStorage.setItem('tabs', 1 )
-console.log('tabs', tabs, +localStorage.getItem('tabs'))
 
 onbeforeunload = function() {
     tabs = +localStorage.getItem('tabs')
@@ -50,11 +49,11 @@ function init() {
     }
 
     function onFocus() {
-        console.log('on focus')
         playMusic()
         
         tabs = +localStorage.getItem('tabs')
         if (tabs > 1) {
+            playSound(sounds.await)
             let manyTabsShield = getManyTabsShield()
             manyTabsShield.showLayer()
         }
@@ -64,5 +63,6 @@ function init() {
         stopMusic()
     }
 
+    playMusic()
     startGame()
 }
