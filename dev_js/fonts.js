@@ -58,7 +58,7 @@ export function initFontStyles() {
 
         levelDoneButton: new TextStyle({
             fontFamily: fonts.vag,
-            fontSize: 53,
+            fontSize: 40,
             fill: '#ffffff',
         }),
 

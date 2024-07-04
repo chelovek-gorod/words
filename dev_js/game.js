@@ -7,11 +7,16 @@ import { EventHub, events } from './events'
 
 let levelsNumber = 0
 let currentLevel = 0
+
+let guessedWords = []
 let storageGameData = localStorage.getItem('gameData')
 if (storageGameData) {
     const gameData = JSON.parse(storageGameData)
     if ('level' in gameData && gameData.level > currentLevel) {
         currentLevel = gameData.level
+    }
+    if ('words' in gameData && gameData.words.length > 0) {
+        guessedWords = gameData.words
     }
 }
 

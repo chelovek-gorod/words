@@ -4,16 +4,25 @@ import { textStyles } from './fonts'
 import { nextLevel } from './events'
 
 const settings = {
-    textLevelDoneNumberY: 257,
-    textCongratulationY: 300,
+    shellColor: 0x000000,
+    shellAlpha: 0.5,
 
-    buttonOffsetX: 155,
-    buttonOffsetY: 659,
-    buttonShadowOffsetY: 6,
-    buttonWidth: 330,
-    buttonHeight: 90,
-    buttonColor: 0x65bd65,
-    buttonShadowColor: 0x508853,
+    bgOffsetX: 55,
+    bgOffsetY: 363,
+    bgWidth: 530,
+    bgHeight: 428,
+    bgColor: 0xffffff,
+
+    triangleLeft: [{x: 128, y: 363}, {x: 144, y: 363}, {x: 144, y: 344}],
+    triangleRight: [{x: 496, y: 363}, {x: 512, y: 363}, {x: 496, y: 344}],
+    triangleColor: 0x9a4626,
+
+    // 352 x 107
+    labelPath: [{x: 144, y: 344}, {x: 144, y: 408}, {x: 160, y: 424}, {x: 160, y: 424}],
+    labelColor: 0xec6b3a,
+
+    labelShadowOffsetY: 9,
+    labelShadowColor: 0xca5428,
 }
 
 export class ManyTabs extends Layer {

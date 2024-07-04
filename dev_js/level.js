@@ -134,6 +134,7 @@ export class Level extends Layer {
         this.userWord = ''
         this.userButtonsInputIndexesArr = []
         this.userWordsCounter = 0
+        this.lastButtonIndexes = []
 
         this.eventMode = 'static'
         this.on('globalpointermove', (event) => { if(this.isOnInput) this.updateCurve(event) } )
@@ -154,6 +155,7 @@ export class Level extends Layer {
             this.inputLayer.cancelLetter()
             this.userWord = this.userWord.slice(0, -1)
 
+            let lastButtonIndex = this.lastButtonIndexes.pop()
             this.userButtons.letters[lastButtonIndex].renderOff()
             return
         }
@@ -165,7 +167,7 @@ export class Level extends Layer {
             this.userWord += this.letters[index]
 
             this.userButtons.letters[index].renderOn()
-            lastButtonIndex = index
+            this.lastButtonIndexes.push(index)
             return
         }
     }
@@ -178,6 +180,7 @@ export class Level extends Layer {
         this.userButtonsInputIndexesArr = []
         this.inputLayer.clearLetters()
 
+        this.lastButtonIndexes.length = 0
         this.userButtons.letters.forEach(letter => letter.renderOff())
         this.userCurve.clear()
 
@@ -306,8 +309,6 @@ function addButtons(letters, circleRadius) {
 
     return buttons
 }
-
-let lastButtonIndex = 0
 
 class Button extends Container {
     constructor(latter, index) {
